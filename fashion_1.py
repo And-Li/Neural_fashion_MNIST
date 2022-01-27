@@ -30,7 +30,7 @@ print(y_train.shape)
 print(y_train[0])
 print(x_train, y_train.shape)
 
-# создаём модель из 3-х слоёв: 28(столько же нейронов, сколько знаков на входе), 14 и 10 на выходе(по кол-ву классов одежды)
+# создаём модель из 3-х слоёв: 
 model = Sequential()
 model.add(Dense(800, input_dim=784, activation='relu'))
 model.add(Dense(400, activation='relu'))
