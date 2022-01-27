@@ -14,27 +14,27 @@ from keras.datasets import fashion_mnist
 # посмотрим размерности выборок
 print(x_train.shape,y_train.shape)
 print(x_test.shape, y_test.shape)
+x_train = np.reshape(x_train.shape[0], -1)
+y_train = np.reshape(y_train.shape[0], -1)
+print(x_train.shape, y_train.shape)
 
-imgs = np.array([x_train[y_train==i][0] for i in range(10)])
-# imgs = np.array([x_train[2]])
+'''imgs = np.array([x_train[y_train==i][0] for i in range(10)])
 imgs = np.concatenate(imgs, axis=1)
-print(len(imgs[0]))
-'''plt.figure()
+plt.figure()
 plt.imshow(imgs, cmap='Greys_r')
 plt.grid(False)
 plt.axis('off')
 plt.show()'''
-
 # создаём модель из 3-х слоёв: 28(столько же нейронов, сколько знаков на входе), 14 и 10 на выходе(по кол-ву классов одежды)
 model = Sequential()
-model.add(Dense(28, input_dim=imgs[0], activation='relu'))
+model.add(Dense(784, input_dim=x_train.shape[0], activation='relu'))
 model.add(Dense(14, activation='relu'))
 model.add(Dense(10, activation='relu'))
 
 model.compile(loss='binary_crossentropy',
-              optimizer=Adam(learning_rate=0.001),
+              optimizer=Adam(learning_rate=0.01),
               metrics=['accuracy'])
-model.fit(x_train, y_train, batch_size=14, epochs=10, verbose=1)
+model.fit(x_train, y_train, batch_size=28, epochs=100, verbose=1)
 
 
 
