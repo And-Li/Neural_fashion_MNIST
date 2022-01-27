@@ -14,28 +14,36 @@ from keras.datasets import fashion_mnist
 # посмотрим размерности выборок
 print(x_train.shape,y_train.shape)
 print(x_test.shape, y_test.shape)
-x_train = np.reshape(x_train.shape[0], -1)
-y_train = np.reshape(y_train.shape[0], -1)
-print(x_train.shape, y_train.shape)
 
-'''imgs = np.array([x_train[y_train==i][0] for i in range(10)])
-imgs = np.concatenate(imgs, axis=1)
-plt.figure()
-plt.imshow(imgs, cmap='Greys_r')
-plt.grid(False)
-plt.axis('off')
-plt.show()'''
+x_train = x_train.reshape(x_train.shape[0], -1)
+x_test_reshaped = x_test.reshape(x_test.shape[0], -1)
+print(f'Форма обучающих данных: {x_train.shape} -> {x_train.shape}')
+print(f'Форма тестовых данных: {x_test.shape} -> {x_test.shape}')
+
+x_train = x_train.astype('float32')/255
+x_test_reshaped = x_test_reshaped.astype('float32')/255
+
+CLASS_COUNT = 10
+y_train = utils.to_categorical(y_train, CLASS_COUNT)
+y_test = utils.to_categorical(y_test, CLASS_COUNT)
+print(y_train.shape)
+print(y_train[0])
+print(x_train, y_train.shape)
+
 # создаём модель из 3-х слоёв: 28(столько же нейронов, сколько знаков на входе), 14 и 10 на выходе(по кол-ву классов одежды)
 model = Sequential()
-model.add(Dense(784, input_dim=x_train.shape[0], activation='relu'))
-model.add(Dense(14, activation='relu'))
-model.add(Dense(10, activation='relu'))
+model.add(Dense(800, input_dim=784, activation='relu'))
+model.add(Dense(400, activation='relu'))
+model.add(Dense(CLASS_COUNT, activation='relu'))
 
 model.compile(loss='binary_crossentropy',
-              optimizer=Adam(learning_rate=0.01),
+              optimizer='adam',
               metrics=['accuracy'])
-model.fit(x_train, y_train, batch_size=28, epochs=100, verbose=1)
+print(model.summary())
+model.fit(x_train, y_train, batch_size=128, epochs=15, verbose=1)
 
-
+n_rec = 389
+plt.imshow(x_test[n_rec], cmap='gray')
+plt.show()
 
 
