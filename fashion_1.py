@@ -37,7 +37,7 @@ model.add(Dense(400, activation='relu'))
 model.add(Dense(class_count, activation='relu'))
 
 model.compile(loss='binary_crossentropy',
-              optimizer=Adam(learning_rate=0.001),
+              optimizer=Adam(learning_rate=0.0001),
               metrics=['accuracy'])
 print(model.summary())
 history = model.fit(x_train,
