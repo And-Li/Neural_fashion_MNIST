@@ -17,39 +17,40 @@ print(x_test.shape, y_test.shape)
 
 x_train = x_train.reshape(x_train.shape[0], -1)
 x_test_reshaped = x_test.reshape(x_test.shape[0], -1)
-# print(f'Форма обучающих данных: {x_train.shape} -> {x_train.shape}')
-# print(f'Форма тестовых данных: {x_test.shape} -> {x_test.shape}')
+# посмотрим размерности выборок
+print(x_train.shape,y_train.shape)
+print(x_test.shape, y_test.shape)
 
 x_train = x_train.astype('float32')/255
 x_test_reshaped = x_test_reshaped.astype('float32')/255
 
-CLASS_COUNT = 10
-y_train = utils.to_categorical(y_train, CLASS_COUNT)
-y_test = utils.to_categorical(y_test, CLASS_COUNT)
-'''print(y_train.shape)
-print(y_train[0])
-print(x_train, y_train.shape)'''
+class_count = 10
+y_train = utils.to_categorical(y_train, class_count)
+y_test = utils.to_categorical(y_test, class_count)
 
 # создаём модель из 3-х слоёв:
 model = Sequential()
-model.add(Dropout(0.3, input_shape=(x_train.shape[1],)))
+model.add(BatchNormalization(input_shape=(x_train.shape[1],)))
 model.add(Dense(800, activation='relu'))
-model.add(Dropout(0.3))
+model.add(BatchNormalization())
 model.add(Dense(400, activation='relu'))
-model.add(Dropout(0.3))
-model.add(Dense(CLASS_COUNT, activation='relu'))
+model.add(Dense(class_count, activation='relu'))
 
 model.compile(loss='binary_crossentropy',
-              optimizer='adam',
+              optimizer=Adam(learning_rate=0.001),
               metrics=['accuracy'])
 print(model.summary())
-model.fit(x_train, y_train, batch_size=128, epochs=10, verbose=1)
-
-'''n_rec = 389
-plt.imshow(x_test[n_rec], cmap='gray')
-plt.show()'''
-print()
+history = model.fit(x_train,
+          y_train,
+          batch_size=1024,
+          epochs=15,
+          validation_data=(x_train[50000:], y_train[50000:]),
+          verbose=1)
+print(history.history['loss'][:5])
+print('Now we evaluate what we got:')
 scores = model.evaluate(x_train, y_train, verbose=1)
 print('Total accuracy is: ', scores[1])
 print('Loss value is: ', scores[0])
-
+scores_test = model.evaluate(x_test_reshaped, y_test, verbose=1)
+print('Accuracy in test selection is: ', scores_test[1])
+print('Loss in test selection is: ', scores_test[0])
