@@ -28,29 +28,43 @@ class_count = 10
 y_train = utils.to_categorical(y_train, class_count)
 y_test = utils.to_categorical(y_test, class_count)
 
-# создаём модель из 3-х слоёв:
-model = Sequential()
-model.add(BatchNormalization(input_shape=(x_train.shape[1],)))
-model.add(Dense(800, activation='relu'))
-model.add(BatchNormalization())
-model.add(Dense(400, activation='relu'))
-model.add(Dense(class_count, activation='relu'))
+# создаём модель:
+# создаём модель:
+model_7 = Sequential()
+model_7.add(BatchNormalization(input_shape=(x_train.shape[1],)))
+model_7.add(Dense(800, activation='relu'))
+model_7.add(BatchNormalization())
+model_7.add(Dense(400, activation='relu'))
+model_7.add(Dense(class_count, activation='sigmoid'))
 
-model.compile(loss='binary_crossentropy',
+model_7.compile(loss='binary_crossentropy',
               optimizer=Adam(learning_rate=0.0001),
               metrics=['accuracy'])
-print(model.summary())
-history = model.fit(x_train,
+history_7 = model_7.fit(x_train,
           y_train,
           batch_size=1024,
           epochs=15,
           validation_data=(x_train[50000:], y_train[50000:]),
           verbose=1)
-print(history.history['loss'][:5])
+print()
 print('Now we evaluate what we got:')
-scores = model.evaluate(x_train, y_train, verbose=1)
-print('Total accuracy is: ', scores[1])
-print('Loss value is: ', scores[0])
-scores_test = model.evaluate(x_test_reshaped, y_test, verbose=1)
-print('Accuracy in test selection is: ', scores_test[1])
-print('Loss in test selection is: ', scores_test[0])
+scores_7 = model_7.evaluate(x_train, y_train, verbose=1)
+print('Total accuracy is: ', scores_7[1])
+print('Loss value is: ', scores_7[0])
+scores_test_7 = model_7.evaluate(x_test_reshaped, y_test, verbose=1)
+print('Accuracy in test selection is: ', scores_test_7[1])
+print('Loss in test selection is: ', scores_test_7[0])
+
+
+plt.plot(history_7.history['loss'],
+         label='Ошибка на обучающем наборе')
+
+plt.plot(history_7.history['val_loss'],
+         label='Ошибка на проверочном наборе')
+
+plt.xlabel('Эпоха обучения')
+plt.ylabel('Ошибка')
+
+plt.legend()
+
+plt.show()
